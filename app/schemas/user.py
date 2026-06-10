@@ -3,8 +3,6 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field
 
-from app.schemas.auth import RegisterRequest
-
 
 class UserResponse(BaseModel):
     id: uuid.UUID

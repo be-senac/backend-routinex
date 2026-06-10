@@ -21,7 +21,6 @@ class User(Base):
     accessibility_profile: Mapped[str | None] = mapped_column(String(50), nullable=True)
     focus_mode_active: Mapped[bool] = mapped_column(Boolean, default=False)
     focus_mode_started_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    focus_mode_ends_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     rest_start: Mapped[str | None] = mapped_column(String(5), nullable=True)
     rest_end: Mapped[str | None] = mapped_column(String(5), nullable=True)
     motivational_time: Mapped[str | None] = mapped_column(String(5), nullable=True)

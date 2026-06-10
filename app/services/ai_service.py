@@ -136,21 +136,4 @@ async def optimize_day(user: User, pending_tasks: list[Task]) -> dict:
     return response.choices[0].message.content
 
 
-async def generate_motivational_message(user: User, recent_progress: str) -> str:
-    system_prompt = (
-        build_system_prompt(user)
-        + "\n\nGere uma mensagem motivacional curta e personalizada baseada no progresso recente do usuario."
-    )
 
-    messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": f"Meu progresso recente: {recent_progress}"},
-    ]
-
-    response = await client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=messages,
-        max_tokens=200,
-        temperature=0.8,
-    )
-    return response.choices[0].message.content

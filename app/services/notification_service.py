@@ -1,11 +1,11 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.reminder import Reminder
-from app.models.task import Task, Priority, TaskStatus
+from app.models.task import Task, Priority
 from app.models.user import User
 
 
@@ -46,14 +46,4 @@ async def snooze_reminder(db: AsyncSession, reminder_id: uuid.UUID, user_id: uui
     return reminder
 
 
-async def get_user_activity_days(db: AsyncSession, user_id: uuid.UUID) -> int:
-    result = await db.execute(
-        select(func.count(func.distinct(func.date(Task.completed_at))))
-        .where(
-            Task.user_id == user_id,
-            Task.is_deleted == False,
-            Task.status == TaskStatus.concluida,
-            Task.completed_at.isnot(None),
-        )
-    )
-    return result.scalar() or 0
+
