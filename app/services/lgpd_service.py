@@ -1,16 +1,14 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
 from app.models.task import Task, TaskStatus
 from app.models.chat_message import ChatMessage
 from app.models.category import Category
-from app.models.reminder import Reminder
 from app.models.routine import Routine
-from app.models.subtask import Subtask
 
 
 async def export_user_data(db: AsyncSession, user_id: uuid.UUID) -> dict:
@@ -78,9 +76,9 @@ async def schedule_account_deletion(db: AsyncSession, user_id: uuid.UUID) -> boo
         raise ValueError("Usuario nao encontrado")
 
     user.is_active = False
-
-    from app.scheduler import schedule_account_deletion
-    schedule_account_deletion(str(user_id), delay_days=30)
-
     await db.commit()
+
+    from app.scheduler import schedule_account_deletion as scheduler_delete
+    scheduler_delete(str(user_id), delay_days=30)
+
     return True

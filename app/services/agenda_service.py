@@ -5,7 +5,7 @@ from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models.task import Task, TaskStatus
+from app.models.task import Task, TaskStatus, Priority
 from app.models.routine import Routine, RecurrenceType
 from app.models.category import Category
 from app.schemas.agenda import AgendaItem, DailyAgendaResponse, WeeklyAgendaResponse
@@ -77,8 +77,8 @@ async def create_routine(
         title=title,
         description=description,
         category_id=category_id,
-        priority=priority,
-        recurrence_type=recurrence_type,
+        priority=Priority(priority),
+        recurrence_type=RecurrenceType(recurrence_type),
         recurrence_days=recurrence_days,
         start_time=start_time,
         estimated_time=estimated_time,

@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from openai import AsyncOpenAI
 
 from app.config import settings

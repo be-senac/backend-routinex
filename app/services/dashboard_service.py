@@ -93,7 +93,7 @@ async def get_dashboard_charts(db: AsyncSession, user_id: uuid.UUID) -> Dashboar
     now = datetime.now(timezone.utc)
     seven_days_ago = now - timedelta(days=7)
 
-    daily_result = await db.execute(
+    daily_completed = await db.execute(
         select(
             func.date(Task.completed_at).label("date"),
             func.count().label("completed"),
@@ -106,9 +106,30 @@ async def get_dashboard_charts(db: AsyncSession, user_id: uuid.UUID) -> Dashboar
         )
         .group_by(func.date(Task.completed_at))
     )
+    daily_created = await db.execute(
+        select(
+            func.date(Task.created_at).label("date"),
+            func.count().label("created"),
+        )
+        .where(
+            Task.user_id == user_id,
+            Task.is_deleted == False,
+            Task.created_at >= seven_days_ago,
+        )
+        .group_by(func.date(Task.created_at))
+    )
+
+    completed_by_date = {str(row.date): row.completed for row in daily_completed.all()}
+    created_by_date = {str(row.date): row.created for row in daily_created.all()}
+
+    all_dates = set(completed_by_date.keys()) | set(created_by_date.keys())
     daily_dist = [
-        DailyDistribution(date=str(row.date), completed=row.completed)
-        for row in daily_result.all()
+        DailyDistribution(
+            date=d,
+            completed=completed_by_date.get(d, 0),
+            created=created_by_date.get(d, 0),
+        )
+        for d in sorted(all_dates)
     ]
 
     cat_result = await db.execute(

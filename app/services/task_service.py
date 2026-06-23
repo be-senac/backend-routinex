@@ -64,7 +64,7 @@ async def get_task_with_progress(task: Task) -> dict:
     else:
         completed = sum(1 for s in task.subtasks if s.is_completed)
         progress = round((completed / total) * 100)
-    return progress
+    return {"progress": progress}
 
 
 async def get_tasks(
