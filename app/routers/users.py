@@ -7,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserResponse, UserUpdateRequest, UserPreferencesRequest, FCMTokenRequest
-from app.services.auth_service import get_current_user
 from app.utils.deps import get_current_user_id, get_current_user_obj
 from app.utils.security import hash_password
 from app.services.lgpd_service import export_user_data, schedule_account_deletion

@@ -1,19 +1,14 @@
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.task import Task, TaskStatus
-from app.models.routine import Routine
-from app.schemas.agenda import DailyAgendaResponse, WeeklyAgendaResponse, OptimizeDayResponse, AgendaItem
-from app.schemas.task import TaskCreate
-from app.services import agenda_service, task_service, ai_service
-from app.services.notification_service import create_reminder_for_task
-from app.utils.deps import get_current_user_id, get_current_user_obj
 from app.models.user import User
-from app.services.auth_service import get_current_user
+from app.schemas.agenda import DailyAgendaResponse, WeeklyAgendaResponse, OptimizeDayResponse, AgendaItem
+from app.services import agenda_service, task_service, ai_service
+from app.utils.deps import get_current_user_id, get_current_user_obj
 
 router = APIRouter(prefix="/agenda", tags=["Agenda"])
 

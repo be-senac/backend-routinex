@@ -1,6 +1,5 @@
 import uuid
 import json
-from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func
@@ -8,7 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.chat_message import ChatMessage
-from app.models.task import Task, TaskStatus
 from app.models.user import User
 from app.schemas.chat import ChatRequest, ChatMessageResponse, ChatHistoryResponse, DecomposeRequest, DecomposeResponse, SuggestRoutineRequest, SuggestRoutineResponse
 from app.services import ai_service, agenda_service

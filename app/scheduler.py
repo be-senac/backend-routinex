@@ -1,5 +1,6 @@
-import asyncio
+# scheduler.py
 import logging
+from datetime import datetime, timezone, timedelta
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.date import DateTrigger
@@ -125,7 +126,6 @@ async def delete_user_data(user_id: str):
 
 
 async def send_reminder(reminder_id: str):
-    from datetime import timedelta
     from app.database import async_session
     from app.models.reminder import Reminder
     from app.models.user import User
@@ -154,7 +154,7 @@ async def send_reminder(reminder_id: str):
 
         try:
             from app.services.firebase_service import send_push_notification
-            send_push_notification(
+            await send_push_notification(
                 user.fcm_token,
                 "RoutineX - Lembrete",
                 reminder.reminder_type,
@@ -222,7 +222,6 @@ async def schedule_task_reminders(task_id: str, user_id: str):
 
 
 def schedule_account_deletion(user_id: str, delay_days: int = 30):
-    from datetime import datetime, timezone, timedelta
     run_date = datetime.now(timezone.utc) + timedelta(days=delay_days)
     scheduler.add_job(
         delete_user_data,
@@ -233,8 +232,6 @@ def schedule_account_deletion(user_id: str, delay_days: int = 30):
     )
     logger.info(f"Exclusao de conta agendada para {run_date} (usuario {user_id})")
 
-
-from datetime import datetime, timezone
 
 def start_scheduler():
     scheduler.add_job(

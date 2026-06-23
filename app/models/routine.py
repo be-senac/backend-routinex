@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 from sqlalchemy import String, Boolean, DateTime, ForeignKey, Text, Float, Enum as SAEnum, Integer
@@ -30,7 +30,7 @@ class Routine(Base):
     start_time: Mapped[str] = mapped_column(String(5), nullable=False)
     estimated_time: Mapped[float | None] = mapped_column(Float, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
 
     user: Mapped["User"] = relationship(back_populates="routines")
     category: Mapped["Category | None"] = relationship()

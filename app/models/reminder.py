@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import String, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
@@ -18,7 +18,7 @@ class Reminder(Base):
     scheduled_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     is_sent: Mapped[bool] = mapped_column(Boolean, default=False)
     snoozed_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now(timezone.utc))
 
     user: Mapped["User"] = relationship(back_populates="reminders")
     task: Mapped["Task | None"] = relationship(back_populates="reminders")

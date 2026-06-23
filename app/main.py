@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,12 +19,26 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
 )
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    from app.database import engine, Base
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    from app.scheduler import start_scheduler
+    start_scheduler()
+    yield
+    from app.scheduler import shutdown_scheduler
+    shutdown_scheduler()
+
+
 app = FastAPI(
     title="RoutineX API",
     description="Backend do RoutineX - Aplicativo de Produtividade",
     version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 app.state.limiter = limiter
@@ -51,18 +66,3 @@ app.include_router(dashboard_router)
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "version": "2.0.0"}
-
-
-@app.on_event("startup")
-async def startup():
-    from app.database import engine, Base
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    from app.scheduler import start_scheduler
-    start_scheduler()
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    from app.scheduler import shutdown_scheduler
-    shutdown_scheduler()
